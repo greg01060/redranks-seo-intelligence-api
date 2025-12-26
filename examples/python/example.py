@@ -1,68 +1,115 @@
 """
-Reddit Traffic and Intelligence API - Python Example
+RedRanks SEO Intelligence API - Python Examples
 
-Find Reddit threads ranking on Google with traffic estimates and brand sentiment.
+Automate SEO with Python. Keyword research, SERP analysis, and discussion discovery.
 
 Get your API key:
-    Zyla:     https://zylalabs.com/api-marketplace/other/reddit+traffic+plus+intelligence+api/11553
-    RapidAPI: https://rapidapi.com/greg01060/api/reddit-traffic-and-intelligence-api
+    https://rapidapi.com/greg01060/api/reddit-traffic-and-intelligence-api
+
+Tutorials:
+    https://www.redranks.com/tutorials/
 
 Requirements:
     pip install requests
 """
 
 import requests
-from typing import Optional
+from typing import Optional, List
 from collections import defaultdict
 
 # ============================================================
-# Configuration - Choose your provider
+# Configuration
 # ============================================================
 
-# Option 1: Zyla API Hub (recommended)
-PROVIDER = "zyla"
-ZYLA_API_KEY = "YOUR_ZYLA_API_KEY"  # Replace with your key
+RAPIDAPI_KEY = "YOUR_RAPIDAPI_KEY"  # Replace with your key
 
-# Option 2: RapidAPI
-# PROVIDER = "rapidapi"
-# RAPIDAPI_KEY = "YOUR_RAPIDAPI_KEY"  # Replace with your key
+HEADERS = {
+	"X-RapidAPI-Key": RAPIDAPI_KEY,
+	"X-RapidAPI-Host": "reddit-traffic-and-intelligence-api.p.rapidapi.com",
+	"Content-Type": "application/json"
+}
 
+BASE_URL = "https://reddit-traffic-and-intelligence-api.p.rapidapi.com/api/v2"
+
+# ============================================================
+# API Functions
 # ============================================================
 
 
-def get_headers():
-	"""Get headers based on provider"""
-	if PROVIDER == "zyla":
-		return {
-			"Authorization": f"Bearer {ZYLA_API_KEY}",
-			"Content-Type": "application/json"
+def keyword_metrics(
+	keywords: List[str],
+	include_related: bool = False,
+	max_related: int = 5
+) -> dict:
+	"""
+	Get keyword metrics: volume, CPC, difficulty, and related keywords.
+	
+	Tutorial: https://www.redranks.com/tutorials/keyword-research-python.html
+	
+	Args:
+		keywords: List of keywords to analyze (max 10)
+		include_related: Include related keyword suggestions
+		max_related: Related keywords per keyword (1-20)
+	
+	Returns:
+		API response with keyword data
+	"""
+	response = requests.post(
+		f"{BASE_URL}/keyword-metrics",
+		headers=HEADERS,
+		json={
+			"keywords": keywords,
+			"include_related": include_related,
+			"max_related": max_related
 		}
-	else:
-		return {
-			"X-RapidAPI-Key": RAPIDAPI_KEY,
-			"X-RapidAPI-Host": "reddit-traffic-and-intelligence-api.p.rapidapi.com",
-			"Content-Type": "application/json"
-		}
+	)
+	response.raise_for_status()
+	return response.json()
 
 
-def get_base_url():
-	"""Get base URL based on provider"""
-	if PROVIDER == "zyla":
-		return "https://zylalabs.com/api/5765/reddit+traffic+plus+intelligence+api/11553"
-	else:
-		return "https://reddit-traffic-and-intelligence-api.p.rapidapi.com/api/v2"
+def serp_analysis(
+	keyword: str,
+	include_features: bool = True,
+	max_results: int = 10
+) -> dict:
+	"""
+	Analyze SERP for a keyword. Detect features and find discussion positions.
+	
+	Tutorial: https://www.redranks.com/tutorials/serp-analysis-python.html
+	
+	Args:
+		keyword: Keyword to analyze
+		include_features: Include SERP feature detection
+		max_results: Organic results to return (1-20)
+	
+	Returns:
+		API response with SERP data
+	"""
+	response = requests.post(
+		f"{BASE_URL}/serp-analysis",
+		headers=HEADERS,
+		json={
+			"keyword": keyword,
+			"include_features": include_features,
+			"max_results": max_results
+		}
+	)
+	response.raise_for_status()
+	return response.json()
 
 
 def discover_threads(
 	keyword: str,
 	your_brand: Optional[str] = None,
-	competitors: Optional[list] = None,
+	competitors: Optional[List[str]] = None,
 	max_threads: int = 10,
 	max_comments: int = 5,
 	data_freshness: str = "balanced"
 ) -> dict:
 	"""
-	Discover Reddit threads ranking on Google for a keyword.
+	Discover Reddit threads ranking on Google with traffic and sentiment.
+	
+	Tutorial: https://www.redranks.com/tutorials/reddit-discussion-discovery.html
 	
 	Args:
 		keyword: The search keyword (2-100 characters)
@@ -73,13 +120,11 @@ def discover_threads(
 		data_freshness: "realtime", "balanced", or "custom"
 	
 	Returns:
-		API response as dictionary
+		API response with thread data
 	"""
-	endpoint = "discover+threads" if PROVIDER == "zyla" else "discover-threads"
-	
 	response = requests.post(
-		f"{get_base_url()}/{endpoint}",
-		headers=get_headers(),
+		f"{BASE_URL}/discover-threads",
+		headers=HEADERS,
 		json={
 			"keyword": keyword,
 			"your_brand": your_brand,
@@ -89,33 +134,94 @@ def discover_threads(
 			"data_freshness": data_freshness
 		}
 	)
-	
 	response.raise_for_status()
 	return response.json()
 
 
-def example_basic_search():
-	"""Example: Basic keyword search"""
-	print("--- Basic Search ---\n")
+# ============================================================
+# Example 1: Keyword Research
+# ============================================================
+
+def example_keyword_research():
+	"""
+	Batch analyze keywords with related suggestions.
 	
-	data = discover_threads("project management software")
+	Learn more: https://www.redranks.com/tutorials/keyword-research-python.html
+	"""
+	print("=" * 60)
+	print("EXAMPLE 1: Keyword Research")
+	print("=" * 60)
 	
-	print(f"Keyword: {data['keyword']}")
-	print(f"Search Volume: {data.get('keyword_metrics', {}).get('volume', 0):,}/month")
-	print(f"Threads Found: {data.get('threads_discovered', 0)}")
-	print(f"Total Traffic: {data.get('summary', {}).get('estimated_monthly_traffic', 0):,}/month\n")
+	keywords = ["crm software", "project management", "help desk software"]
 	
-	# Show top threads
-	for i, thread in enumerate(data.get("threads", [])[:3], 1):
-		print(f"{i}. {thread['title']}")
-		print(f"   URL: {thread.get('url', 'N/A')}")
-		print(f"   Traffic: {thread.get('estimated_traffic', 0):,}/month")
-		print(f"   Priority: {thread.get('priority', 'N/A')}\n")
+	data = keyword_metrics(keywords, include_related=True, max_related=5)
+	
+	for kw in data.get("keywords", []):
+		print(f"\n{kw['keyword'].upper()}")
+		print(f"  Volume: {kw.get('volume', 0):,}/month")
+		print(f"  CPC: ${kw.get('cpc', 0):.2f}")
+		print(f"  Difficulty: {kw.get('keyword_difficulty', 0)}/100")
+		print(f"  Intent: {kw.get('search_intent', 'unknown')}")
+		
+		related = kw.get("related_keywords", [])
+		if related:
+			print(f"  Related keywords:")
+			for r in related[:3]:
+				print(f"    - {r['keyword']} ({r.get('volume', 0):,}/mo)")
 
 
-def example_competitive_intel():
-	"""Example: Competitive intelligence with brand tracking"""
-	print("--- Competitive Intelligence ---\n")
+# ============================================================
+# Example 2: SERP Analysis
+# ============================================================
+
+def example_serp_analysis():
+	"""
+	Analyze SERP features and find discussion opportunities.
+	
+	Learn more: https://www.redranks.com/tutorials/serp-analysis-python.html
+	"""
+	print("\n" + "=" * 60)
+	print("EXAMPLE 2: SERP Analysis")
+	print("=" * 60)
+	
+	keyword = "best crm software"
+	
+	data = serp_analysis(keyword, max_results=10)
+	
+	print(f"\nKeyword: {data.get('keyword')}")
+	
+	# SERP Features
+	features = data.get("serp_features", {})
+	print("\nSERP Features Detected:")
+	print(f"  AI Overview: {'Yes' if features.get('has_ai_overview') else 'No'}")
+	print(f"  Discussion Box: {'Yes' if features.get('has_discussion_box') else 'No'}")
+	print(f"  Featured Snippet: {'Yes' if features.get('has_featured_snippet') else 'No'}")
+	print(f"  People Also Ask: {'Yes' if features.get('has_people_also_ask') else 'No'}")
+	
+	# Discussion positions
+	disc_positions = data.get("discussion_positions", [])
+	print(f"\nDiscussions found at positions: {disc_positions}")
+	
+	# Top results
+	print("\nTop 5 Organic Results:")
+	for result in data.get("organic_results", [])[:5]:
+		disc_marker = " [DISCUSSION]" if result.get("is_discussion") else ""
+		print(f"  {result['position']}. {result['domain']}{disc_marker}")
+
+
+# ============================================================
+# Example 3: Discussion Discovery
+# ============================================================
+
+def example_discussion_discovery():
+	"""
+	Find Reddit threads with traffic estimates and brand sentiment.
+	
+	Learn more: https://www.redranks.com/tutorials/reddit-discussion-discovery.html
+	"""
+	print("\n" + "=" * 60)
+	print("EXAMPLE 3: Discussion Discovery")
+	print("=" * 60)
 	
 	data = discover_threads(
 		keyword="CRM software",
@@ -124,7 +230,47 @@ def example_competitive_intel():
 		max_threads=5
 	)
 	
-	# Aggregate brand sentiment across all threads
+	print(f"\nKeyword: {data.get('keyword')}")
+	
+	# Keyword metrics
+	metrics = data.get("keyword_metrics", {})
+	print(f"Search Volume: {metrics.get('volume', 0):,}/month")
+	
+	# Summary
+	summary = data.get("summary", {})
+	print(f"Threads Found: {summary.get('total_threads', 0)}")
+	print(f"Total Traffic: {summary.get('estimated_monthly_traffic', 0):,}/month")
+	
+	# Top threads
+	print("\nTop Threads:")
+	for thread in data.get("threads", [])[:3]:
+		print(f"\n  {thread.get('title')}")
+		print(f"    URL: {thread.get('url')}")
+		print(f"    Traffic: {thread.get('estimated_traffic', 0):,}/month")
+		print(f"    Priority: {thread.get('priority')}")
+		print(f"    Source: {thread.get('source')}")
+
+
+# ============================================================
+# Example 4: Competitive Intelligence
+# ============================================================
+
+def example_competitive_intel():
+	"""
+	Aggregate brand sentiment across multiple threads.
+	"""
+	print("\n" + "=" * 60)
+	print("EXAMPLE 4: Competitive Intelligence")
+	print("=" * 60)
+	
+	data = discover_threads(
+		keyword="email marketing software",
+		your_brand="MailPro",
+		competitors=["Mailchimp", "ConvertKit", "Klaviyo"],
+		max_threads=10
+	)
+	
+	# Aggregate sentiment
 	brand_stats = defaultdict(lambda: {
 		"positive": 0,
 		"negative": 0,
@@ -143,155 +289,94 @@ def example_competitive_intel():
 			brand_stats[brand]["praise"].extend(sentiment.get("praise", []))
 			brand_stats[brand]["complaints"].extend(sentiment.get("complaints", []))
 	
-	# Display results
-	print("Brand Sentiment Summary:\n")
+	print("\nBrand Sentiment Summary:")
 	
 	for brand, stats in brand_stats.items():
 		total = stats["positive"] + stats["negative"] + stats["neutral"]
-		positive_rate = round((stats["positive"] / total) * 100) if total > 0 else 0
+		if total == 0:
+			continue
 		
-		print(f"{brand}:")
-		print(f"  Mentions: {total} ({positive_rate}% positive)")
-		print(f"  +{stats['positive']} / -{stats['negative']} / ~{stats['neutral']}")
+		positive_rate = round((stats["positive"] / total) * 100)
+		
+		print(f"\n  {brand}:")
+		print(f"    Mentions: {total} ({positive_rate}% positive)")
+		print(f"    +{stats['positive']} / -{stats['negative']} / ~{stats['neutral']}")
 		
 		if stats["praise"]:
 			unique_praise = list(set(stats["praise"]))[:3]
-			print(f"  Praise: {', '.join(unique_praise)}")
+			print(f"    Praise: {', '.join(unique_praise)}")
 		
 		if stats["complaints"]:
 			unique_complaints = list(set(stats["complaints"]))[:3]
-			print(f"  Complaints: {', '.join(unique_complaints)}")
-		
-		print()
+			print(f"    Complaints: {', '.join(unique_complaints)}")
 
+
+# ============================================================
+# Example 5: Find Opportunities
+# ============================================================
 
 def example_find_opportunities():
-	"""Example: Find high-traffic opportunities where your brand is missing"""
-	print("--- High-Traffic Opportunities ---\n")
+	"""
+	Find high-traffic threads where your brand is missing.
+	"""
+	print("\n" + "=" * 60)
+	print("EXAMPLE 5: Find Opportunities")
+	print("=" * 60)
 	
-	competitors = ["Mailchimp", "ConvertKit", "Klaviyo"]
-	your_brand = "MailPro"
+	your_brand = "Acme CRM"
+	competitors = ["HubSpot", "Salesforce", "Pipedrive"]
 	
 	data = discover_threads(
-		keyword="email marketing",
+		keyword="best crm for startups",
 		your_brand=your_brand,
 		competitors=competitors,
 		max_threads=10
 	)
 	
-	# Find threads where competitors are mentioned but your brand isn't
+	# Find threads where competitors appear but you don't
 	opportunities = []
 	
 	for thread in data.get("threads", []):
 		brands = thread.get("analysis", {}).get("brand_sentiments", {})
-		has_competitors = any(b in brands for b in competitors)
+		has_competitors = any(c in brands for c in competitors)
 		has_your_brand = your_brand in brands
-		high_traffic = thread.get("estimated_traffic", 0) > 1000
+		high_traffic = thread.get("estimated_traffic", 0) > 500
 		
 		if has_competitors and not has_your_brand and high_traffic:
 			opportunities.append(thread)
 	
-	print(f"Found {len(opportunities)} opportunity threads:\n")
+	print(f"\nFound {len(opportunities)} opportunity threads:")
 	
 	for i, thread in enumerate(opportunities, 1):
 		brands_mentioned = list(thread.get("analysis", {}).get("brand_sentiments", {}).keys())
 		
-		print(f"{i}. {thread['title']}")
-		print(f"   URL: {thread.get('url', 'N/A')}")
-		print(f"   Traffic: {thread.get('estimated_traffic', 0):,}/month")
-		print(f"   Competitors mentioned: {', '.join(brands_mentioned)}")
-		print()
+		print(f"\n  {i}. {thread.get('title')}")
+		print(f"     Traffic: {thread.get('estimated_traffic', 0):,}/month")
+		print(f"     Competitors: {', '.join(brands_mentioned)}")
+		print(f"     URL: {thread.get('url')}")
 
 
-def example_generate_battle_card():
-	"""Example: Generate a sales battle card from sentiment data"""
-	print("--- Auto-Generated Battle Card ---\n")
-	
-	data = discover_threads(
-		keyword="help desk software",
-		your_brand="SupportHub",
-		competitors=["Zendesk", "Freshdesk", "Intercom"],
-		max_threads=10
-	)
-	
-	# Aggregate competitor data
-	competitor_data = defaultdict(lambda: {
-		"praise": [],
-		"complaints": [],
-		"positive": 0,
-		"negative": 0
-	})
-	
-	for thread in data.get("threads", []):
-		sentiments = thread.get("analysis", {}).get("brand_sentiments", {})
-		
-		for brand, sentiment in sentiments.items():
-			if brand in ["Zendesk", "Freshdesk", "Intercom"]:
-				competitor_data[brand]["positive"] += sentiment.get("positive", 0)
-				competitor_data[brand]["negative"] += sentiment.get("negative", 0)
-				competitor_data[brand]["praise"].extend(sentiment.get("praise", []))
-				competitor_data[brand]["complaints"].extend(sentiment.get("complaints", []))
-	
-	# Generate battle card
-	print("=" * 50)
-	print("SALES BATTLE CARD - Help Desk Software")
-	print("=" * 50)
-	
-	for competitor, stats in competitor_data.items():
-		unique_complaints = list(set(stats["complaints"]))[:5]
-		unique_praise = list(set(stats["praise"]))[:3]
-		
-		if not unique_complaints and not unique_praise:
-			continue
-		
-		print(f"\n## vs {competitor}")
-		print("-" * 30)
-		
-		if unique_praise:
-			print(f"Their strengths (prepare defense):")
-			for item in unique_praise:
-				print(f"  - {item}")
-		
-		if unique_complaints:
-			print(f"\nTheir weaknesses (attack here):")
-			for item in unique_complaints:
-				print(f"  - {item}")
-		
-		# Generate positioning suggestion
-		if unique_complaints:
-			print(f"\nSuggested positioning:")
-			print(f'  "Unlike {competitor}, SupportHub {_invert_complaint(unique_complaints[0])}"')
-
-
-def _invert_complaint(complaint: str) -> str:
-	"""Helper to invert a complaint into positive positioning"""
-	inversions = {
-		"expensive": "offers transparent, predictable pricing",
-		"complex": "is simple to set up and use",
-		"slow": "delivers fast performance",
-		"poor support": "provides responsive customer support",
-		"difficult": "is intuitive and easy to learn",
-	}
-	
-	complaint_lower = complaint.lower()
-	for key, value in inversions.items():
-		if key in complaint_lower:
-			return value
-	
-	return f"addresses the '{complaint}' issue"
-
+# ============================================================
+# Run All Examples
+# ============================================================
 
 if __name__ == "__main__":
-	print(f"\nUsing provider: {PROVIDER.upper()}\n")
-	print("=" * 50)
+	print("\nRedRanks SEO Intelligence API - Python Examples")
+	print("Tutorials: https://www.redranks.com/tutorials/\n")
 	
-	example_basic_search()
-	
-	print("\n" + "=" * 50)
-	example_competitive_intel()
-	
-	print("\n" + "=" * 50)
-	example_find_opportunities()
-	
-	print("\n" + "=" * 50)
-	example_generate_battle_card()
+	try:
+		example_keyword_research()
+		example_serp_analysis()
+		example_discussion_discovery()
+		example_competitive_intel()
+		example_find_opportunities()
+		
+		print("\n" + "=" * 60)
+		print("All examples completed!")
+		print("=" * 60)
+		
+	except requests.exceptions.HTTPError as e:
+		print(f"\nAPI Error: {e}")
+		print("Check your API key and try again.")
+	except Exception as e:
+		print(f"\nError: {e}")
