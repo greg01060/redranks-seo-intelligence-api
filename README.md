@@ -2,7 +2,7 @@
 
 Automate SEO with Python. Keyword research, SERP analysis, and Reddit discussion discovery - all via simple API calls.
 
-**[Tutorials](https://www.redranks.com/tutorials/)** | **[API Documentation](https://www.redranks.com/api-docs.html)** | **[Demo Report](https://www.redranks.com/demo-report.html)** | **[Get API Key](https://rapidapi.com/greg01060/api/reddit-traffic-and-intelligence-api)**
+**[Tutorials](https://www.redranks.com/tutorials/)** | **[API Documentation](https://www.redranks.com/api-docs.html)** | **[Demo Report](https://www.redranks.com/demo-report.html)** | **[Get API Key](https://rapidapi.com/greg01060/api/redranks-seo-intelligence-api)**
 
 ---
 
@@ -273,7 +273,7 @@ Complete working examples in multiple languages:
 - [Tutorials](https://www.redranks.com/tutorials/)
 - [API Documentation](https://www.redranks.com/api-docs.html)
 - [Demo Report](https://www.redranks.com/demo-report.html)
-- [RapidAPI](https://rapidapi.com/greg01060/api/reddit-traffic-and-intelligence-api)
+- [RapidAPI](https://rapidapi.com/greg01060/api/redranks-seo-intelligence-api)
 
 ---
 
