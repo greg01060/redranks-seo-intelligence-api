@@ -5,7 +5,7 @@
 # Automate SEO with simple API calls. Keyword research, SERP analysis, and discussion discovery.
 #
 # Get your API key:
-#     https://rapidapi.com/greg01060/api/reddit-traffic-and-intelligence-api
+#     https://rapidapi.com/greg01060/api/redranks-seo-intelligence-api
 #
 # Tutorials:
 #     https://www.redranks.com/tutorials/
