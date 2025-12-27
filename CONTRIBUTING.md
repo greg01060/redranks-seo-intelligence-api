@@ -47,7 +47,7 @@ Documentation improvements are always welcome:
 For issues with the API itself (not the examples), please contact us through:
 
 - [Website](https://www.redranks.com)
-- [RapidAPI](https://rapidapi.com/greg01060/api/reddit-traffic-and-intelligence-api)
+- [RapidAPI](https://rapidapi.com/greg01060/api/redranks-seo-intelligence-api)
 
 ## Resources
 
