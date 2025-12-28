@@ -18,11 +18,11 @@ const RAPIDAPI_KEY = 'YOUR_RAPIDAPI_KEY'; // Replace with your key
 
 const HEADERS = {
 	'X-RapidAPI-Key': RAPIDAPI_KEY,
-	'X-RapidAPI-Host': 'reddit-traffic-and-intelligence-api.p.rapidapi.com',
+	'X-RapidAPI-Host': 'redranks-seo-intelligence-api.p.rapidapi.com',
 	'Content-Type': 'application/json'
 };
 
-const BASE_URL = 'https://reddit-traffic-and-intelligence-api.p.rapidapi.com/api/v2';
+const BASE_URL = 'https://redranks-seo-intelligence-api.p.rapidapi.com/api/v2';
 
 // ============================================================
 // API Functions
@@ -87,6 +87,29 @@ async function discoverThreads(keyword, options = {}) {
 			max_threads: options.maxThreads || 10,
 			max_comments_per_thread: options.maxComments || 5,
 			data_freshness: options.freshness || 'balanced'
+		})
+	});
+
+	if (!response.ok) {
+		throw new Error(`API error: ${response.status}`);
+	}
+
+	return response.json();
+}
+
+/**
+ * Analyze any Reddit thread by URL.
+ * Useful for threads found manually, from competitor research, or shared by your team.
+ */
+async function analyzeThread(url, options = {}) {
+	const response = await fetch(`${BASE_URL}/analyze-threads`, {
+		method: 'POST',
+		headers: HEADERS,
+		body: JSON.stringify({
+			url,
+			your_brand: options.yourBrand || null,
+			competitors: options.competitors || null,
+			max_comments: options.maxComments || 20
 		})
 	});
 
