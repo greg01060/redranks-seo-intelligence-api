@@ -1,0 +1,36 @@
+# Environment
+.env
+.env.local
+*.env
+
+# API Keys - Never commit these!
+**/secrets.*
+**/credentials.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.venv/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

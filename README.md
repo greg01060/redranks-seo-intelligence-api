@@ -13,6 +13,7 @@ Automate SEO with Python. Keyword research, SERP analysis, and Reddit discussion
 | `/keyword-metrics` | Search volume, CPC, difficulty, related keywords | 1-3 seconds |
 | `/serp-analysis` | SERP features, organic results, discussion positions | 1-3 seconds |
 | `/discover-threads` | Reddit threads on Google + traffic + brand sentiment | 20-30s fresh, <1s cached |
+| `/analyze-threads` | Analyze any Reddit thread by URL for sentiment + brands | 3-5 seconds |
 
 ---
 
@@ -24,10 +25,10 @@ import requests
 API_KEY = "your_rapidapi_key"
 HEADERS = {
     "X-RapidAPI-Key": API_KEY,
-    "X-RapidAPI-Host": "reddit-traffic-and-intelligence-api.p.rapidapi.com",
+    "X-RapidAPI-Host": "redranks-seo-intelligence-api.p.rapidapi.com",
     "Content-Type": "application/json"
 }
-BASE_URL = "https://reddit-traffic-and-intelligence-api.p.rapidapi.com/api/v2"
+BASE_URL = "https://redranks-seo-intelligence-api.p.rapidapi.com/api/v2"
 
 # 1. Keyword Research
 response = requests.post(f"{BASE_URL}/keyword-metrics", headers=HEADERS, json={
@@ -45,6 +46,14 @@ print(response.json())
 # 3. Discussion Discovery
 response = requests.post(f"{BASE_URL}/discover-threads", headers=HEADERS, json={
     "keyword": "crm software",
+    "your_brand": "Acme CRM",
+    "competitors": ["HubSpot", "Salesforce"]
+})
+print(response.json())
+
+# 4. Thread Analysis (analyze any Reddit URL)
+response = requests.post(f"{BASE_URL}/analyze-threads", headers=HEADERS, json={
+    "url": "https://www.reddit.com/r/smallbusiness/comments/abc123/best_crm/",
     "your_brand": "Acme CRM",
     "competitors": ["HubSpot", "Salesforce"]
 })
@@ -237,6 +246,60 @@ POST /api/v2/discover-threads
 
 ---
 
+### 4. Analyze Thread
+
+Analyze any Reddit thread by URL. Useful for threads found manually, from competitor research, or shared by your team.
+
+```bash
+POST /api/v2/analyze-threads
+```
+
+**Request:**
+```json
+{
+    "url": "https://www.reddit.com/r/smallbusiness/comments/abc123/best_crm/",
+    "your_brand": "Acme CRM",
+    "competitors": ["HubSpot", "Salesforce"],
+    "max_comments": 30
+}
+```
+
+**Response:**
+```json
+{
+    "status": "success",
+    "thread": {
+        "title": "Best CRM for small business?",
+        "subreddit": "smallbusiness",
+        "url": "https://www.reddit.com/r/smallbusiness/comments/abc123/best_crm/",
+        "comment_count": 89
+    },
+    "analysis": {
+        "sentiment": "mixed",
+        "buyer_intent": "high",
+        "pain_points": ["pricing complexity", "learning curve"],
+        "topics": ["integrations", "ease of use", "pricing"]
+    },
+    "brand_mentions": {
+        "HubSpot": {
+            "sentiment": "positive",
+            "mentions": 12,
+            "praise": ["easy to use", "good free tier"],
+            "complaints": ["expensive at scale"]
+        }
+    }
+}
+```
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `url` | string | Yes | - | Reddit thread URL |
+| `your_brand` | string | No | null | Your brand for mention analysis |
+| `competitors` | array | No | null | Competitor brands (max 20) |
+| `max_comments` | integer | No | 20 | Comments to analyze (1-50) |
+
+---
+
 ## Use Cases
 
 - **SEO Tools** - Add keyword research and SERP tracking
@@ -264,6 +327,7 @@ Complete working examples in multiple languages:
 | `/keyword-metrics` | 1-3 seconds | N/A |
 | `/serp-analysis` | 1-3 seconds | N/A |
 | `/discover-threads` | 20-30 seconds | Under 1 second |
+| `/analyze-threads` | 3-5 seconds | N/A |
 
 ---
 
