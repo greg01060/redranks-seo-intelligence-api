@@ -25,11 +25,11 @@ RAPIDAPI_KEY = "YOUR_RAPIDAPI_KEY"  # Replace with your key
 
 HEADERS = {
 	"X-RapidAPI-Key": RAPIDAPI_KEY,
-	"X-RapidAPI-Host": "reddit-traffic-and-intelligence-api.p.rapidapi.com",
+	"X-RapidAPI-Host": "redranks-seo-intelligence-api.p.rapidapi.com",
 	"Content-Type": "application/json"
 }
 
-BASE_URL = "https://reddit-traffic-and-intelligence-api.p.rapidapi.com/api/v2"
+BASE_URL = "https://redranks-seo-intelligence-api.p.rapidapi.com/api/v2"
 
 # ============================================================
 # API Functions
@@ -132,6 +132,41 @@ def discover_threads(
 			"max_threads": max_threads,
 			"max_comments_per_thread": max_comments,
 			"data_freshness": data_freshness
+		}
+	)
+	response.raise_for_status()
+	return response.json()
+
+
+def analyze_thread(
+	url: str,
+	your_brand: Optional[str] = None,
+	competitors: Optional[List[str]] = None,
+	max_comments: int = 20
+) -> dict:
+	"""
+	Analyze any Reddit thread by URL.
+	
+	Useful for threads found manually, from competitor research, or shared by your team.
+	Returns the same sentiment and brand analysis as discover_threads.
+	
+	Args:
+		url: Reddit thread URL
+		your_brand: Your brand name for mention analysis
+		competitors: List of competitor brand names (max 20)
+		max_comments: Comments to analyze (1-50)
+	
+	Returns:
+		API response with thread analysis
+	"""
+	response = requests.post(
+		f"{BASE_URL}/analyze-threads",
+		headers=HEADERS,
+		json={
+			"url": url,
+			"your_brand": your_brand,
+			"competitors": competitors,
+			"max_comments": max_comments
 		}
 	)
 	response.raise_for_status()
