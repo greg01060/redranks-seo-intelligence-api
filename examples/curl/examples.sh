@@ -18,7 +18,7 @@
 # Replace with your API key
 RAPIDAPI_KEY="YOUR_RAPIDAPI_KEY"
 
-BASE_URL="https://reddit-traffic-and-intelligence-api.p.rapidapi.com/api/v2"
+BASE_URL="https://redranks-seo-intelligence-api.p.rapidapi.com/api/v2"
 
 
 # ============================================================
@@ -29,7 +29,7 @@ BASE_URL="https://reddit-traffic-and-intelligence-api.p.rapidapi.com/api/v2"
 # Basic keyword lookup
 curl -X POST "$BASE_URL/keyword-metrics" \
   -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
-  -H "X-RapidAPI-Host: reddit-traffic-and-intelligence-api.p.rapidapi.com" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
   -H "Content-Type: application/json" \
   -d '{
     "keywords": ["crm software", "project management"]
@@ -38,7 +38,7 @@ curl -X POST "$BASE_URL/keyword-metrics" \
 # With related keywords
 curl -X POST "$BASE_URL/keyword-metrics" \
   -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
-  -H "X-RapidAPI-Host: reddit-traffic-and-intelligence-api.p.rapidapi.com" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
   -H "Content-Type: application/json" \
   -d '{
     "keywords": ["crm software"],
@@ -55,7 +55,7 @@ curl -X POST "$BASE_URL/keyword-metrics" \
 # Basic SERP analysis
 curl -X POST "$BASE_URL/serp-analysis" \
   -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
-  -H "X-RapidAPI-Host: reddit-traffic-and-intelligence-api.p.rapidapi.com" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
   -H "Content-Type: application/json" \
   -d '{
     "keyword": "best crm software"
@@ -64,7 +64,7 @@ curl -X POST "$BASE_URL/serp-analysis" \
 # With more results
 curl -X POST "$BASE_URL/serp-analysis" \
   -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
-  -H "X-RapidAPI-Host: reddit-traffic-and-intelligence-api.p.rapidapi.com" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
   -H "Content-Type: application/json" \
   -d '{
     "keyword": "best crm software",
@@ -81,7 +81,7 @@ curl -X POST "$BASE_URL/serp-analysis" \
 # Basic search
 curl -X POST "$BASE_URL/discover-threads" \
   -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
-  -H "X-RapidAPI-Host: reddit-traffic-and-intelligence-api.p.rapidapi.com" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
   -H "Content-Type: application/json" \
   -d '{
     "keyword": "CRM software",
@@ -91,7 +91,7 @@ curl -X POST "$BASE_URL/discover-threads" \
 # With brand tracking
 curl -X POST "$BASE_URL/discover-threads" \
   -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
-  -H "X-RapidAPI-Host: reddit-traffic-and-intelligence-api.p.rapidapi.com" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
   -H "Content-Type: application/json" \
   -d '{
     "keyword": "CRM software",
@@ -104,7 +104,7 @@ curl -X POST "$BASE_URL/discover-threads" \
 # Force fresh data (no cache)
 curl -X POST "$BASE_URL/discover-threads" \
   -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
-  -H "X-RapidAPI-Host: reddit-traffic-and-intelligence-api.p.rapidapi.com" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
   -H "Content-Type: application/json" \
   -d '{
     "keyword": "project management",
@@ -114,9 +114,36 @@ curl -X POST "$BASE_URL/discover-threads" \
 
 
 # ============================================================
-# 4. HEALTH CHECK
+# 4. ANALYZE THREAD
+# Analyze any Reddit thread by URL
+# ============================================================
+
+# Basic thread analysis
+curl -X POST "$BASE_URL/analyze-threads" \
+  -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://www.reddit.com/r/smallbusiness/comments/abc123/best_crm/"
+  }'
+
+# With brand tracking
+curl -X POST "$BASE_URL/analyze-threads" \
+  -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://www.reddit.com/r/smallbusiness/comments/abc123/best_crm/",
+    "your_brand": "Acme CRM",
+    "competitors": ["HubSpot", "Salesforce"],
+    "max_comments": 30
+  }'
+
+
+# ============================================================
+# 5. HEALTH CHECK
 # ============================================================
 
 curl -X GET "$BASE_URL/health" \
   -H "X-RapidAPI-Key: $RAPIDAPI_KEY" \
-  -H "X-RapidAPI-Host: reddit-traffic-and-intelligence-api.p.rapidapi.com"
+  -H "X-RapidAPI-Host: redranks-seo-intelligence-api.p.rapidapi.com"
